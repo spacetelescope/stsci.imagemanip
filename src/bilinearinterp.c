@@ -139,16 +139,49 @@ static PyObject * bilinearinterp(PyObject *obj, PyObject *args)
     return Py_BuildValue("i",status);
 }
 
-static PyMethodDef bilinearinterp_methods[] =
-{
+static PyMethodDef bilinearinterpMethods[] = {
     {"bilinearinterp",  bilinearinterp, METH_VARARGS, 
         "bilinearinterp(input, output)"},
     {0,            0}                             /* sentinel */
 };
 
-void initbilinearinterp(void) {
-    Py_InitModule("bilinearinterp", bilinearinterp_methods);
+#if PY_MAJOR_VERSION >= 3
+static struct PyModuleDef moduledef = {
+  PyModuleDef_HEAD_INIT,
+  "bilinearinterp",        /* m_name */
+  "Correlate module",  /* m_doc */
+  -1,                  /* m_size */
+  bilinearinterpMethods,   /* m_methods */
+  NULL,                /* m_reload */
+  NULL,                /* m_traverse */
+  NULL,                /* m_clear */
+  NULL,                /* m_free */
+};
+#endif
+
+PyMODINIT_FUNC
+#if PY_MAJOR_VERSION >= 3
+PyInit_bilinearinterp(void)
+#else
+initbilinearinterp(void)
+#endif
+{
+    PyObject *m, *d;
+#if PY_MAJOR_VERSION >= 3
+    m = PyModule_Create(&moduledef);
+#else
+    m = Py_InitModule("bilinearinterp", bilinearinterpMethods);
+#endif
+    d = PyModule_GetDict(m);
+    /*
+    * gain access to the numpy API
+    */
     import_array();
+#if PY_MAJOR_VERSION >= 3
+	return m;
+#else
+	return;
+#endif
 }
 
 
