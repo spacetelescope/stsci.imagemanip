@@ -2,7 +2,7 @@ from __future__ import division
 
 import unittest
 import numpy as n
-import exceptions,os,sys
+import os, sys
 from stsci.imagemanip import interp2d
 
 class TestImageManipFunctions(unittest.TestCase):
