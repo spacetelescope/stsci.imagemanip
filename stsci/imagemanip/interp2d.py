@@ -25,6 +25,6 @@ def expand2d(image,outputsize):
         newimage = n.empty(outputsize,dtype=image.dtype)
         lininterp(image,newimage)
     else:
-        raise ValueError,"Output shape must be of larger dimension than input image."
+        raise ValueError("Output shape must be of larger dimension than input image.")
 
     return newimage
