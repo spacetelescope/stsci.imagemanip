@@ -161,31 +161,16 @@ static struct PyModuleDef moduledef = {
 PyObject *PyInit_bilinearinterp(void)
 {
     PyObject *m;
-    FILE *fd = fopen("/tmp/interp.log", "w");
-    setbuf(fd, NULL);
-
-    fputs("Start PyInit_bilinearinterp\n", fd);
     m = PyModule_Create(&moduledef);
-    fputs("Call PyModule_Create\n", fd);
     import_array();
-    fputs("Call import_array\n", fd);
-    fclose(fd);
-
     return m;
 }
 
 #else
 PyMODINIT_FUNC initbilinearinterp(void)
 {
-    FILE *fd = fopen("/tmp/interp.log", "w");
-    setbuf(fd, NULL);
-
-    fputs("Start initbilinearinterp\n", fd);
     (void) Py_InitModule("bilinearinterp", methods);
-    fputs("Call Py_InitModule\n", fd);
     import_array();
-    fputs("Call import_array\n", fd);
-    fclose(fd);
 }
 #endif
 
