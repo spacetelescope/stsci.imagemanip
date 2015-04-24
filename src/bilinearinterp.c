@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <numpy/arrayobject.h>
+#include <numpy/npy_3kcompat.h>
 
 /* This routine determines the appropriate array index i and weights
    p and q for linear interpolation.  If the array is called a, and ai
@@ -29,7 +30,7 @@ float *p, *q    o: weights for linear interpolation
    ORing the data quality information.
 */
 
-int unbin2d (float *a, float *b, int inx, int iny, int onx, int ony) {
+static int unbin2d (float *a, float *b, int inx, int iny, int onx, int ony) {
 
 /* arguments:
 PyArrayObject *a        i: input data
@@ -112,7 +113,7 @@ PyArrayObject *b        o: output data
     return (1);
 }
 
-static PyObject * bilinearinterp(PyObject *obj, PyObject *args)
+static PyObject *Py_Bilinearinterp(PyObject *obj, PyObject *args)
 {
     PyObject *input, *output;
     PyArrayObject *dataa, *datab;
@@ -139,50 +140,40 @@ static PyObject * bilinearinterp(PyObject *obj, PyObject *args)
     return Py_BuildValue("i",status);
 }
 
-static PyMethodDef bilinearinterpMethods[] = {
-    {"bilinearinterp",  bilinearinterp, METH_VARARGS, 
-        "bilinearinterp(input, output)"},
-    {0,            0}                             /* sentinel */
+static PyMethodDef methods[] = {
+    {"bilinearinterp", (PyCFunction)Py_Bilinearinterp, METH_VARARGS, NULL},
+    {NULL, NULL, 0, NULL}
 };
 
-#if PY_MAJOR_VERSION >= 3
+#if defined(NPY_PY3K)
 static struct PyModuleDef moduledef = {
-  PyModuleDef_HEAD_INIT,
-  "bilinearinterp",        /* m_name */
-  "Correlate module",  /* m_doc */
-  -1,                  /* m_size */
-  bilinearinterpMethods,   /* m_methods */
-  NULL,                /* m_reload */
-  NULL,                /* m_traverse */
-  NULL,                /* m_clear */
-  NULL,                /* m_free */
+    PyModuleDef_HEAD_INIT,
+    "bilinearinterp",
+    NULL,
+    -1,
+    methods,
+    NULL,
+    NULL,
+    NULL,
+    NULL
 };
+
+PyObject *PyInit_bilinearinterp(void)
+{
+    PyObject *m;
+    m = PyModule_Create(&moduledef);
+    import_array();
+    return m;
+}
+
+#else
+PyMODINIT_FUNC initbilinearinterp(void)
+{
+    (void) Py_InitModule("bilinearinterp", methods);
+    import_array();
+}
 #endif
 
-PyMODINIT_FUNC
-#if PY_MAJOR_VERSION >= 3
-PyInit_bilinearinterp(void)
-#else
-initbilinearinterp(void)
-#endif
-{
-    PyObject *m, *d;
-#if PY_MAJOR_VERSION >= 3
-    m = PyModule_Create(&moduledef);
-#else
-    m = Py_InitModule("bilinearinterp", bilinearinterpMethods);
-#endif
-    d = PyModule_GetDict(m);
-    /*
-    * gain access to the numpy API
-    */
-    import_array();
-#if PY_MAJOR_VERSION >= 3
-	return m;
-#else
-	return;
-#endif
-}
 
 
 
