@@ -1,6 +1,6 @@
 from __future__ import division
 
-import interp2d
+from . import interp2d
 
 from .version import *
 
