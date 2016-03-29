@@ -1,7 +1,7 @@
 from __future__ import division
 
 import numpy as n
-from . import bilinearinterp 
+from . import bilinearinterp
 
 def expand2d(image,outputsize):
     """
